@@ -45,9 +45,11 @@ export class AuthService {
         subject: 'Подтвердите вашу регистрацию',
         html: `<p>Подтвердите ваш email, перейдя по ссылке:</p><a href="${confirmUrl}">${confirmUrl}</a>`,
       });
-    } catch (error) {
+    } catch (er) {
+      console.error('Ошибка при отправке письма:'); // Логирование ошибки
       throw new BadRequestException(
-        'Не удалось отправить письмо с подтверждением' + error,
+        'Не удалось отправить письмо с подтверждением. Проверьте настройки SMTP.' +
+          er,
       );
     }
 
