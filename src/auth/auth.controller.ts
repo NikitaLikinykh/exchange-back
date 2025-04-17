@@ -37,4 +37,15 @@ export class AuthController {
 
     return { message: 'Email успешно подтвержден!' };
   }
+
+  @Post('login')
+  async login(
+    @Body('email') email: string,
+    @Body('password') password: string,
+  ) {
+    if (!email || !password) {
+      throw new BadRequestException('Email и пароль обязательны');
+    }
+    return this.authService.login(email, password);
+  }
 }

@@ -3,9 +3,12 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module'; // Импортируем UserModule
-
+import { JwtModule } from '@nestjs/jwt';
 @Module({
-  imports: [UserModule], // Добавляем UserModule
+  imports: [
+    UserModule,
+    JwtModule.register({ secret: 'default', signOptions: { expiresIn: '1h' } }),
+  ], // Добавляем UserModule
   controllers: [AuthController],
   providers: [AuthService],
 })
