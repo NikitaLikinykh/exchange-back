@@ -48,4 +48,13 @@ export class AuthController {
     }
     return this.authService.login(email, password);
   }
+
+  @Post('refresh')
+  async refreshAccessToken(@Body('refreshToken') refreshToken: string) {
+    if (!refreshToken) {
+      throw new BadRequestException('Refresh token is required');
+    }
+
+    return this.authService.refreshToken(refreshToken);
+  }
 }

@@ -6,4 +6,5 @@ export interface User extends Document {
   password: string;
   isEmailConfirmed: boolean;
   confirmationToken?: string;
+  refreshToken?: string; // Field to store the refresh token
 }

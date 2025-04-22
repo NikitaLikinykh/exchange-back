@@ -105,11 +105,15 @@ export class AuthService {
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
     const expiresIn = new Date();
-    expiresIn.setHours(expiresIn.getHours() + 24); // Set expiration to 24 hours from now
+    expiresIn.setHours(expiresIn.getHours() + 24);
+
+    // Save the refresh token in the database
+    user.refreshToken = refreshToken;
+    await user.save();
 
     return {
       accessToken,
-      expiresIn: expiresIn.toISOString(), // Return expiration date as ISO string
+      expiresIn: expiresIn.toISOString(),
       refreshToken,
     };
   }
@@ -119,13 +123,13 @@ export class AuthService {
       const payload = this.jwtService.verify(refreshToken);
       const user = await this.userModel.findById(payload.sub);
 
-      if (!user) {
-        throw new UnauthorizedException('Пользователь не найден');
+      if (!user || user.refreshToken !== refreshToken) {
+        throw new UnauthorizedException('Неверный или истекший refresh token');
       }
 
       const newAccessToken = this.jwtService.sign(
         { email: user.email, sub: user._id },
-        { expiresIn: '1h' },
+        { expiresIn: '24h' },
       );
 
       return { accessToken: newAccessToken };

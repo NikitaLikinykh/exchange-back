@@ -15,6 +15,9 @@ export class User extends Document {
 
   @Prop()
   confirmationToken: string;
+
+  @Prop()
+  refreshToken: string; // Field to store the refresh token
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
