@@ -101,10 +101,17 @@ export class AuthService {
     }
 
     const payload = { email: user.email, sub: user._id };
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '24h' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
-    return { accessToken, refreshToken };
+    const expiresIn = new Date();
+    expiresIn.setHours(expiresIn.getHours() + 24); // Set expiration to 24 hours from now
+
+    return {
+      accessToken,
+      expiresIn: expiresIn.toISOString(), // Return expiration date as ISO string
+      refreshToken,
+    };
   }
 
   async refreshToken(refreshToken: string) {
