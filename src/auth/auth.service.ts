@@ -120,7 +120,9 @@ export class AuthService {
 
   async refreshToken(refreshToken: string) {
     try {
-      const payload = this.jwtService.verify(refreshToken);
+      const payload = this.jwtService.verify<{ email: string; sub: string }>(
+        refreshToken,
+      );
       const user = await this.userModel.findById(payload.sub);
 
       if (!user || user.refreshToken !== refreshToken) {
@@ -133,7 +135,7 @@ export class AuthService {
       );
 
       return { accessToken: newAccessToken };
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('Неверный или истекший refresh token');
     }
   }
