@@ -101,8 +101,29 @@ export class AuthService {
     }
 
     const payload = { email: user.email, sub: user._id };
-    const token = this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
-    return { accessToken: token };
+    return { accessToken, refreshToken };
+  }
+
+  async refreshToken(refreshToken: string) {
+    try {
+      const payload = this.jwtService.verify(refreshToken);
+      const user = await this.userModel.findById(payload.sub);
+
+      if (!user) {
+        throw new UnauthorizedException('Пользователь не найден');
+      }
+
+      const newAccessToken = this.jwtService.sign(
+        { email: user.email, sub: user._id },
+        { expiresIn: '1h' },
+      );
+
+      return { accessToken: newAccessToken };
+    } catch (error) {
+      throw new UnauthorizedException('Неверный или истекший refresh token');
+    }
   }
 }

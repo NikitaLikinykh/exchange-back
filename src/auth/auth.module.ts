@@ -7,8 +7,11 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     UserModule,
-    JwtModule.register({ secret: 'default', signOptions: { expiresIn: '1h' } }),
-  ], // Добавляем UserModule
+    JwtModule.register({
+      secret: 'default',
+      signOptions: { expiresIn: '1h' }, // Access token expiration
+    }),
+  ],
   controllers: [AuthController],
   providers: [AuthService],
 })
