@@ -86,16 +86,9 @@ export class AuthService {
 
   async login(email: string, password: string) {
     const user = await this.userModel.findOne({ email });
-
-    if (!user) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Неверный email или пароль');
     }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Неверный email или пароль');
-    }
-
     if (!user.isEmailConfirmed) {
       throw new BadRequestException('Email не подтвержден');
     }
@@ -104,17 +97,16 @@ export class AuthService {
     const accessToken = this.jwtService.sign(payload, { expiresIn: '24h' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
-    const expiresIn = new Date();
-    expiresIn.setHours(expiresIn.getHours() + 24);
-
-    // Save the refresh token in the database
     user.refreshToken = refreshToken;
     await user.save();
 
+    const expiresIn = new Date();
+    expiresIn.setHours(expiresIn.getHours() + 24);
+
     return {
       accessToken,
-      expiresIn: expiresIn.toISOString(),
       refreshToken,
+      expiresIn: expiresIn.toISOString(),
     };
   }
 
@@ -126,7 +118,7 @@ export class AuthService {
       const user = await this.userModel.findById(payload.sub);
 
       if (!user || user.refreshToken !== refreshToken) {
-        throw new UnauthorizedException('Неверный или истекший refresh token');
+        throw new UnauthorizedException('Недействительный refresh token');
       }
 
       const newAccessToken = this.jwtService.sign(
@@ -134,9 +126,14 @@ export class AuthService {
         { expiresIn: '24h' },
       );
 
-      return { accessToken: newAccessToken };
+      return { newAccessToken };
     } catch {
-      throw new UnauthorizedException('Неверный или истекший refresh token');
+      throw new UnauthorizedException('Недействительный refresh token');
     }
+  }
+
+  // Внизу файла
+  async findById(userId: string) {
+    return this.userModel.findById(userId);
   }
 }
