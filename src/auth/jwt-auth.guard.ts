@@ -11,19 +11,25 @@ import { Request } from 'express';
 export class JwtAuthGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<Request>();
     if (!req.cookies)
       throw new UnauthorizedException('Cookies are not available');
-    console.log(req.cookies);
-    const token = req.cookies['access_token'];
-    console.log('Token:', token);
+
+    const cookies: Record<string, string> = req.cookies as Record<
+      string,
+      string
+    >;
+    const token = cookies['access_token'];
+
     if (!token) throw new UnauthorizedException('Нет токена');
 
     try {
-      const payload = this.jwtService.verify(token);
+      const payload = this.jwtService.verify<{ userId: string; email: string }>(
+        token,
+      );
       req['user'] = payload; // можно использовать в контроллере
-      return true;
+      return Promise.resolve(true);
     } catch {
       throw new UnauthorizedException('Неверный токен');
     }
