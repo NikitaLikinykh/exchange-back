@@ -45,7 +45,7 @@ export class AuthController {
       throw new BadRequestException('Неверный или истекший токен');
     }
 
-    return res.redirect('/login'); // можешь изменить на нужную страницу
+    return res.redirect('/login');
   }
 
   @Post('login')
@@ -54,26 +54,30 @@ export class AuthController {
     @Body('password') password: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken } = await this.authService.login(
-      email,
-      password,
-    );
+    const { accessToken, refreshToken, expiresIn } =
+      await this.authService.login(email, password);
 
     res.cookie('access_token', accessToken, {
       httpOnly: true,
-      secure: false, // Поставь true, если будет HTTPS
+      secure: false,
       sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24, // 24 часа
+      maxAge: 1000 * 60 * 60 * 24,
     });
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 дней
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
-    return { message: 'Успешный вход' };
+    res.cookie('expires_in', expiresIn, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+    return { message: 'Успешный вход', expiresIn };
   }
 
   @Post('logout')

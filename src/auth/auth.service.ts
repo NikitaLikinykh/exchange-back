@@ -76,7 +76,6 @@ export class AuthService {
       throw new BadRequestException('Email уже подтвержден');
     }
 
-    // Обновление статуса пользователя
     user.isEmailConfirmed = true;
     user.confirmationToken = undefined;
     await user.save();
@@ -102,11 +101,12 @@ export class AuthService {
 
     const expiresIn = new Date();
     expiresIn.setHours(expiresIn.getHours() + 24);
+    const expiresInTimestamp = Math.floor(expiresIn.getTime() / 1000); // Unix Timestamp в секундах
 
     return {
       accessToken,
       refreshToken,
-      expiresIn: expiresIn.toISOString(),
+      expiresIn: expiresInTimestamp,
     };
   }
 
