@@ -58,36 +58,36 @@ export class AuthController {
     const { accessToken, refreshToken, expiresIn, phone } =
       await this.authService.login(email, password);
 
-    res.cookie(
-      'user',
-      JSON.stringify({ email, phone, accessToken, refreshToken, expiresIn }),
-      {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        maxAge: 1000 * 60 * 60 * 24,
-      },
-    );
-    // res.cookie('access_token', accessToken, {
-    //   httpOnly: true,
-    //   secure: false,
-    //   sameSite: 'lax',
-    //   maxAge: 1000 * 60 * 60 * 24,
-    // });
-
-    // res.cookie('refresh_token', refreshToken, {
-    //   httpOnly: true,
-    //   secure: false,
-    //   sameSite: 'lax',
-    //   maxAge: 1000 * 60 * 60 * 24 * 7,
-    // });
-
-    // res.cookie('expires_in', expiresIn, {
-    //   httpOnly: true,
-    //   secure: false,
-    //   sameSite: 'lax',
-    //   maxAge: 1000 * 60 * 60 * 24 * 7,
-    // });
+    res.cookie('email', email, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24,
+    });
+    res.cookie('phone', phone, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24,
+    });
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24,
+    });
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+    res.cookie('expires_in', expiresIn, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
     // return { message: 'Успешный вход', expiresIn };
   }
 
