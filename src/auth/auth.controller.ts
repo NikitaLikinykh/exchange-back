@@ -58,18 +58,6 @@ export class AuthController {
     const { accessToken, refreshToken, expiresIn, phone } =
       await this.authService.login(email, password);
 
-    res.cookie('email', email, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24,
-    });
-    res.cookie('phone', phone, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24,
-    });
     res.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: false,
@@ -111,7 +99,7 @@ export class AuthController {
       if (!user) {
         throw new UnauthorizedException('Пользователь не найден');
       }
-      return { email: user.email, id: user._id };
+      return { email: user.email, id: user._id, phone: user.phone };
     } catch {
       throw new UnauthorizedException('Неверный токен');
     }
