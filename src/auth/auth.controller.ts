@@ -55,7 +55,7 @@ export class AuthController {
     @Body('password') password: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken, expiresIn, phone } =
+    const { accessToken, refreshToken, expiresIn } =
       await this.authService.login(email, password);
 
     res.cookie('access_token', accessToken, {
