@@ -44,25 +44,25 @@ export class AuthService {
 
     await newUser.save();
 
-    // Генерация ссылки подтверждения
-    const confirmUrl = `http://localhost:3000/auth/confirm?token=${confirmationToken}`;
+    // // Генерация ссылки подтверждения
+    // const confirmUrl = `http://localhost:3000/auth/confirm?token=${confirmationToken}`;
 
-    // Отправка письма
-    try {
-      await this.mailerService.sendMail({
-        to: email,
-        subject: 'Подтвердите вашу регистрацию',
-        html: `<p>Подтвердите ваш email, перейдя по ссылке:</p><a href="${confirmUrl}">${confirmUrl}</a>`,
-      });
-    } catch (er) {
-      console.error('Ошибка при отправке письма:'); // Логирование ошибки
-      throw new BadRequestException(
-        'Не удалось отправить письмо с подтверждением. Проверьте настройки SMTP.' +
-          er,
-      );
-    }
+    // // Отправка письма
+    // try {
+    //   await this.mailerService.sendMail({
+    //     to: email,
+    //     subject: 'Подтвердите вашу регистрацию',
+    //     html: `<p>Подтвердите ваш email, перейдя по ссылке:</p><a href="${confirmUrl}">${confirmUrl}</a>`,
+    //   });
+    // } catch (er) {
+    //   console.error('Ошибка при отправке письма:'); // Логирование ошибки
+    //   throw new BadRequestException(
+    //     'Не удалось отправить письмо с подтверждением. Проверьте настройки SMTP.' +
+    //       er,
+    //   );
+    // }
 
-    return { message: 'Письмо с подтверждением отправлено' };
+    // return { message: 'Письмо с подтверждением отправлено' };
   }
 
   async confirmEmail(token: string) {

@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module'; // Импортируем AuthM
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true, // Makes environment variables globally available
     }),
     MongooseModule.forRoot(
