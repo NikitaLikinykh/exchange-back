@@ -25,28 +25,29 @@ export class AuthController {
   async register(
     @Body('email') email: string,
     @Body('password') password: string,
+    @Body('phone') phone: string,
   ) {
     if (!email || !password) {
       throw new BadRequestException('Email и пароль обязательны');
     }
-    return this.authService.register(email, password);
+    return this.authService.register(email, password, phone);
   }
 
-  @Get('confirm')
-  async confirmEmail(@Req() req: Request, @Res() res: Response) {
-    const token = req.query.token as string;
-    if (!token) {
-      throw new BadRequestException('Токен не предоставлен');
-    }
+  // @Get('confirm')
+  // async confirmEmail(@Req() req: Request, @Res() res: Response) {
+  //   const token = req.query.token as string;
+  //   if (!token) {
+  //     throw new BadRequestException('Токен не предоставлен');
+  //   }
 
-    const user = await this.authService.confirmEmail(token);
+  //   const user = await this.authService.confirmEmail(token);
 
-    if (!user) {
-      throw new BadRequestException('Неверный или истекший токен');
-    }
+  //   if (!user) {
+  //     throw new BadRequestException('Неверный или истекший токен');
+  //   }
 
-    return res.redirect('/login');
-  }
+  //   return res.redirect('/login');
+  // }
 
   @Post('login')
   async login(
@@ -54,30 +55,40 @@ export class AuthController {
     @Body('password') password: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken, expiresIn } =
+    const { accessToken, refreshToken, expiresIn, phone } =
       await this.authService.login(email, password);
 
-    res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24,
-    });
+    res.cookie(
+      'user',
+      JSON.stringify({ email, phone, accessToken, refreshToken, expiresIn }),
+      {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24,
+      },
+    );
+    // res.cookie('access_token', accessToken, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: 'lax',
+    //   maxAge: 1000 * 60 * 60 * 24,
+    // });
 
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
+    // res.cookie('refresh_token', refreshToken, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: 'lax',
+    //   maxAge: 1000 * 60 * 60 * 24 * 7,
+    // });
 
-    res.cookie('expires_in', expiresIn, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
-    return { message: 'Успешный вход', expiresIn };
+    // res.cookie('expires_in', expiresIn, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: 'lax',
+    //   maxAge: 1000 * 60 * 60 * 24 * 7,
+    // });
+    // return { message: 'Успешный вход', expiresIn };
   }
 
   @Post('logout')

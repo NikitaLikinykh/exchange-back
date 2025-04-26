@@ -21,7 +21,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(email: string, password: string) {
+  async register(email: string, password: string, phone: string) {
     // Проверка на существование пользователя
     const existingUser = await this.userModel.findOne({ email });
     if (existingUser) {
@@ -38,6 +38,7 @@ export class AuthService {
     const newUser = new this.userModel({
       email,
       password: hashedPassword,
+      phone: phone,
       confirmationToken,
     });
 
@@ -88,9 +89,9 @@ export class AuthService {
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Неверный email или пароль');
     }
-    if (!user.isEmailConfirmed) {
-      throw new BadRequestException('Email не подтвержден');
-    }
+    // if (!user.isEmailConfirmed) {
+    //   throw new BadRequestException('Email не подтвержден');
+    // }
 
     const payload = { email: user.email, sub: user._id };
     const accessToken = this.jwtService.sign(payload, { expiresIn: '24h' });
@@ -106,6 +107,7 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
+      phone: user.phone,
       expiresIn: expiresInTimestamp,
     };
   }

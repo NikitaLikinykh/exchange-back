@@ -13,6 +13,9 @@ export class User extends Document {
   @Prop({ default: false })
   isEmailConfirmed: boolean;
 
+  @Prop({ required: true })
+  phone: string;
+
   @Prop()
   confirmationToken: string;
 
