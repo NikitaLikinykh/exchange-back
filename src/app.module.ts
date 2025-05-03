@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './auth/auth.module'; // Импортируем AuthModule
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { AuthModule } from './auth/auth.module'; // Импортируем AuthM
       }),
       inject: [ConfigService],
     }),
-    AuthModule, // Добавляем AuthModule
+    AuthModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
