@@ -55,7 +55,7 @@ export class AuthController {
     @Body('password') password: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken, expiresIn } =
+    const { accessToken, refreshToken, expiresIn, isAdmin } =
       await this.authService.login(email, password);
 
     res.cookie('access_token', accessToken, {
@@ -71,6 +71,12 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
     res.cookie('expires_in', expiresIn, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+    res.cookie('isAdmin', isAdmin, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',

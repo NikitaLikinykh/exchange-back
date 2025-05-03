@@ -7,5 +7,6 @@ export interface User extends Document {
   phone: string;
   isEmailConfirmed: boolean;
   confirmationToken?: string;
-  refreshToken?: string; // Field to store the refresh token
+  refreshToken?: string;
+  isAdmin: boolean;
 }

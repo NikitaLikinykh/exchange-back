@@ -109,6 +109,7 @@ export class AuthService {
       refreshToken,
       phone: user.phone,
       expiresIn: expiresInTimestamp,
+      isAdmin: user.isAdmin,
     };
   }
 
