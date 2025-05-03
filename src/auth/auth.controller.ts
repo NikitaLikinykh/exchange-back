@@ -89,6 +89,8 @@ export class AuthController {
   logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
+    res.clearCookie('expires_in');
+    res.clearCookie('isAdmin');
     return { message: 'Выход выполнен' };
   }
   @UseGuards(JwtAuthGuard)
